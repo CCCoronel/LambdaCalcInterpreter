@@ -321,4 +321,4 @@ OBSERVACOES IMPORTANTES:
 - Deve carregar arquivo de definicoes obrigatorias
 - Nao pode ter definicoes hard-coded
 
-===============================================================================
+===============================================================================apear precedencia de operadores (aplicacao e lambda)
