@@ -5,27 +5,45 @@
 FASE 1: ANALISE E PLANEJAMENTO
 ===============================================================================
 
-1.1 Analise da Gramatica Completa
+1.1 Analise da Gramatica Completa ✓ DEFINIDA PELO PROFESSOR
 ----------------------------------
-[ ] Revisar toda a gramatica BNF
-[ ] Identificar todos os tokens necessarios
-[ ] Mapear precedencia de operadores (se houver)
-[ ] Identificar construcoes especiais (loops, condicionais, etc.)
-[ ] Definir semantica de avaliacao para cada construcao
+[x] Revisar toda a gramatica BNF (EBNF fornecida na lista)
+[x] Identificar todos os tokens necessarios (todos listados)
+[ ] Mapear precedencia de operadores (aplicacao e lambda)
+[ ] Identificar construcoes especiais (lambda calculus puro)
+[x] Definir semantica de avaliacao (beta-reduction + ambiente)
 
-1.2 Definicao de Requisitos
+1.2 Definicao de Requisitos ✓ ESPECIFICADOS PELO PROFESSOR
 ---------------------------
-[ ] Especificar formato de entrada (arquivo, string, REPL?)
-[ ] Definir formato de saida (resultado, arvore, trace?)
-[ ] Listar casos de teste essenciais
-[ ] Definir tratamento de erro (recuperacao, mensagens)
-[ ] Especificar funcionalidades extras (debug, pretty-print, etc.)
+[x] Especificar formato de entrada (arquivo de definicoes + sessao)
+[x] Definir formato de saida (resultado das avaliacoes)
+[x] Listar casos de teste essenciais (arquivo com true, false, and, etc.)
+[x] Definir tratamento de erro (syntax/runtime errors)
+[ ] Especificar funcionalidades extras (carregar arquivo de definicoes)
 
-1.3 Arquitetura do Sistema
+REQUISITOS ESPECIFICOS DA LISTA:
+- Deve processar arquivo de definicoes com true, false, and, or, etc.
+- Deve rodar em Linux Mint 22.1 via apt
+- Deve processar sessoes com statements e newlines
+- Deve suportar lambda em 3 formatos: λ, \, lambda
+- Deve fazer binding de variaveis (nome: expressao)
+- Deve avaliar expressoes lambda calculus
+
+1.3 Arquitetura do Sistema ✓ PYTHON RECOMENDADO
 --------------------------
-[ ] Definir estrutura de modulos
-[ ] Planejar estruturas de dados (AST, tabela de simbolos)
-[ ] Definir interfaces entre componentes
+[x] Escolher linguagem de implementacao (Python - disponivel via apt)
+[ ] Definir estrutura de modulos (lexer.py, parser.py, interpreter.py, main.py)
+[ ] Planejar estruturas de dados (AST classes, Environment)
+[ ] Definir interfaces entre componentes (Token -> AST -> Value)
+
+ESTRUTURA SUGERIDA:
+lambda_interpreter/
+├── lexer.py          # Tokenizacao
+├── parser.py         # AST generation  
+├── interpreter.py    # Avaliacao/beta-reduction
+├── main.py          # CLI interface
+├── definitions.lc   # Arquivo com true, false, and, etc.
+└── test_cases.lc    # Casos de teste
 
 ===============================================================================
 
@@ -173,14 +191,50 @@ Total: ~13-23 dias (dependendo da complexidade da gramatica)
 
 ===============================================================================
 
-PROXIMOS PASSOS IMEDIATOS
+PROXIMOS PASSOS IMEDIATOS ✓ BASEADOS NA LISTA DE EXERCICIOS
 ===============================================================================
 
-1. Complete a especificacao da gramatica - mostre o resto da BNF
-2. Defina os requisitos especificos do seu projeto
-3. Escolha as ferramentas e linguagem definitivas
-4. Crie o primeiro caso de teste simples para guiar o desenvolvimento
-5. Configure o ambiente de desenvolvimento
+1. ✓ Gramatica completa ja fornecida pelo professor
+2. ✓ Requisitos especificos definidos na lista  
+3. ✓ Python escolhido (disponivel via apt no Linux Mint)
+4. [ ] Criar arquivo definitions.lc com todas as definicoes da lista
+5. [ ] Implementar casos de teste simples para guiar desenvolvimento
+
+ARQUIVO DEFINITIONS.LC OBRIGATORIO:
+true:(λt. (λf. t))
+false:(λt. (λf. f))  
+and:(λa. (λb. ((a b) a)))
+or:(λa. (λb. ((a a) b)))
+not:(λb. ((b false) true))
+if:(λp. (λa. (λb. ((p a) b))))
+pair:(λx. (λy. (λf. ((f x) y))))
+cons:(λx. (λy. (λf. ((f x) y))))
+first:(λp. (p true))
+car:(λp. (p true))
+second:(λp. (p false))
+cdr:(λp. (p false))
+nil:(λx. true)
+empty:(λx. true)
+null:(λp. (p (λx. (λy. false))))
+isempty: (λp. (p (λx. (λy. false))))
+tree:(λd. (λl. (λr. ((pair d) ((pair l) r)))))
+datum:(λt. (first t))
+left:(λt. (first (second t)))
+right:(λt. (second (second t)))
+incr:(λn. (λf. (λy. (f ((n f) y)))))
+plus:(λm. (λn. ((m incr) n)))
+times:(λm. (λn. ((m (plus n)) zero)))
+iszero:(λn. ((n (λy. false)) true))
+0:(λf. (λx. x))
+1:(λf. (λx. (f x)))
+2:(λf. (λx. (f (f x))))
+3:(λf. (λx. (f (f (f x)))))
+4:(λf. (λx. (f (f (f (f x))))))
+5:(λf. (λx. (f (f (f (f (f x)))))))
+6:(λf. (λx. (f (f (f (f (f (f x))))))))
+7:(λf. (λx. (f (f (f (f (f (f (f x)))))))))
+8:(λf. (λx. (f (f (f (f (f (f (f (f x))))))))))
+9:(λf. (λx. (f (f (f (f (f (f (f (f (f x))))))))))
 
 ===============================================================================
 
@@ -196,43 +250,75 @@ DICAS IMPORTANTES
 
 ===============================================================================
 
-CHECKLIST RAPIDO PARA CADA FASE
+CHECKLIST RAPIDO PARA CADA FASE - PROBLEMA 1 DA LISTA
 ===============================================================================
 
-FASE 1 - ANALISE:
-[ ] Gramatica completa definida
-[ ] Requisitos claros
-[ ] Arquitetura planejada
-[ ] Casos de teste iniciais identificados
+FASE 1 - ANALISE (QUASE COMPLETA):
+[x] Gramatica EBNF fornecida pelo professor
+[x] Requisitos claros na lista de exercicios
+[x] Python escolhido (apt install python3)
+[ ] Casos de teste com definitions.lc criados
+[ ] Estrutura de modulos definida
 
-FASE 2 - FRONTEND:
-[ ] Lexer funcionando com todos os tokens
-[ ] Parser gerando AST correta
+FASE 2 - FRONTEND (IMPLEMENTACAO):
+[ ] Lexer reconhecendo todos tokens da EBNF
+[ ] Parser gerando AST para session/statement/expression
+[ ] Suporte aos 3 tipos de lambda (λ, \, lambda)
+[ ] Tratamento de newlines correto (Windows vs Linux)
 [ ] Testes unitarios passando
-[ ] Tratamento basico de erro
 
-FASE 3 - BACKEND:
-[ ] Interpretador avaliando expressoes basicas
-[ ] Tabela de simbolos funcionando
-[ ] Funcoes lambda implementadas
+FASE 3 - BACKEND (CORE):
+[ ] Interpretador fazendo beta-reduction
+[ ] Environment com bindings funcionando
+[ ] Carregamento do arquivo definitions.lc
+[ ] Avaliacao de Church encodings (numeros, booleanos)
 [ ] Aplicacao de funcao funcionando
 
-FASE 4 - TESTES:
-[ ] Suite de testes completa
-[ ] Casos de erro cobertos
-[ ] Performance aceitavel
-[ ] Validacao contra especificacao
+FASE 4 - TESTES (VALIDACAO):
+[ ] Teste com todas as definicoes obrigatorias
+[ ] Validacao de true, false, and, or, not
+[ ] Teste de numeros Church (0, 1, 2, ..., 9)
+[ ] Teste de operacoes (plus, times, incr)
+[ ] Teste de estruturas (pair, first, second)
 
-FASE 5 - REFINAMENTO:
+FASE 5 - REFINAMENTO (ENTREGA):
+[ ] Instrucoes de compilacao/execucao no relatorio
+[ ] Codigo fonte organizado para entrega
+[ ] Funciona no Linux Mint 22.1
 [ ] Mensagens de erro claras
-[ ] Otimizacoes implementadas
-[ ] Funcionalidades extras adicionadas
-[ ] Codigo limpo e documentado
 
-FASE 6 - ENTREGA:
-[ ] Documentacao completa
-[ ] Projeto organizado
-[ ] Pronto para uso/distribuicao
-[ ] Exemplos funcionando
+FASE 6 - ENTREGA FINAL:
+[ ] Relatorio LaTeX com scrartcl, fonte 12
+[ ] Codigo fonte separado do relatorio
+[ ] Instrucoes de instalacao/execucao
+[ ] Arquivo definitions.lc incluido
+
+===============================================================================
+
+GRAMATICA EBNF COMPLETA (DA LISTA):
+===============================================================================
+
+<session>      ::= ( [ <statement> ] <newline> )*
+<statement>    ::= <expression> | <binding>
+<binding>      ::= <NAME> <COLON> <expression>
+<expression>   ::= <NAME>
+                | <LPAR> <lambda> <NAME> <DOT> <expression> <RPAR>
+                | <LPAR> <expression> <expression> <RPAR>
+<lambda>       ::= <LAMBDA_CHR> | <BACKSLASH> | <LAMBDA_STR>
+<DOT>          ::= '.'
+<COLON>        ::= ':'
+<LPAR>         ::= '('
+<RPAR>         ::= ')'
+<LAMBDA_CHR>   ::= 'λ'    # Unicode U+03BB
+<LAMBDA_STR>   ::= 'lambda'
+<BACKSLASH>    ::= '\'
+<NAME>         ::= [a-zA-Z0-9_]+
+
+OBSERVACOES IMPORTANTES:
+- Quebras de linha sao significativas (terminam statements)
+- Diferenca entre Windows (\r\n) e Linux (\n) 
+- Unicode lambda (U+03BB) deve ser suportado
+- Deve carregar arquivo de definicoes obrigatorias
+- Nao pode ter definicoes hard-coded
 
 ===============================================================================
