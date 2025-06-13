@@ -1,12 +1,10 @@
 <session>       ::= (<statement> <newline>)*
-
+# xablau
 <statement>     ::= <expression> | <binding>
 
 <binding>       ::= <NAME> <COLON> <expression>
 
-<expression>    ::= <NAME>
-               | <LPAR> <lambda> <NAME> <DOT> <expression> <RPAR>
-               | <LPAR> <expression> <expression> <RPAR>
+<expression>    ::= <NAME> | <LPAR> <lambda> <NAME> <DOT> <expression> <RPAR> | <LPAR> <expression> <expression> <RPAR>
 
 <lambda>        ::= <LAMBDA_CHR> | <BACKSLASH> | <LAMBDA_STR>
 
