@@ -1,34 +1,47 @@
 from lambda_io.file_loader import load_definition
-from parser.tokenizer import tokenize_lambda_expression, print_tokens
+from parser.tokenizer import tokenize_lambda_expression
+from parser.parser import parse_tokens
+from evaluator.enviroment import Environment
+from evaluator.evaluator import evaluate
+from ast_nodes.nodes import Binding
 
 def main():
-    # Carregar definições de um arquivo
+    env = Environment()
+    # Carrega todas as definições do core.lambda
     try:
-        bindings = load_definition("./lambda.bnf")  # Ou ajuste o caminho conforme necessário
+        bindings = load_definition("core.lambda")
     except FileNotFoundError:
-        print("Arquivo lambda.bnf não encontrado.")
+        print("Arquivo core.lambda não encontrado.")
         return
     except SyntaxError as e:
-        print(f"Erro de sintaxe no arquivo: {e}")
+        print(f"Erro de sintaxe ao carregar definições: {e}")
         return
 
-    print("\n==== Tokens de cada definição carregada ====\n")
+    # Parseia cada binding
+    for name, expr_str in bindings:
+        tokens = tokenize_lambda_expression(expr_str)
+        ast_list = parse_tokens(tokens)
+        print(ast_list)
+        for stmt in ast_list:
+            if isinstance(stmt, Binding):
+                # Impossível, pois no core só há expressões (não statements soltos)
+                env.define(stmt.name, stmt.expr)
+            else:
+                env.define(name, stmt)
 
-    for name, expr in bindings:
-        print(f"\n--- Tokenizando a definição: {name} ---")
-        print(f"Expressão: {expr}")
+    print("\n=== Ambiente carregado com sucesso! ===")
+    print(f"Bindings definidos: {list(env.bindings.keys())}")
 
-        tokens = tokenize_lambda_expression(expr)
-        print_tokens(tokens)
+    # Agora vamos testar uma expressão simples
+    test_expr = "(and true false)"
 
-    print (f"--------- TESTE BASEADO EM UM CODIGO ---------")
+    print(f"\n=== Testando a expressão: {test_expr} ===")
+    tokens = tokenize_lambda_expression(test_expr)
+    ast_list = parse_tokens(tokens)
 
-    code = "(λx. x)"
-    tokens = tokenize_lambda_expression(code)
-    print(f"Codigo: {code}\n")
-    for t in tokens:
-        print(t)
-
+    for stmt in ast_list:
+        result = evaluate(stmt, env)
+        print(f"Resultado da avaliação: {result}")
 
 if __name__ == "__main__":
     main()

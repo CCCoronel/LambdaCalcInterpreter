@@ -1,5 +1,5 @@
 <session>       ::= (<statement> <newline>)*
-# xablau
+
 <statement>     ::= <expression> | <binding>
 
 <binding>       ::= <NAME> <COLON> <expression>
