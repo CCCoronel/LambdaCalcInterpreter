@@ -18,6 +18,7 @@ def main():
     except SyntaxError as e:
         print(f"Erro de sintaxe ao carregar definições: {e}")
         return
+
     
     # Parseia cada binding
     for name, expr_str in bindings:
@@ -39,7 +40,9 @@ def main():
     print(f"Bindings definidos: {list(env.bindings.keys())}")
 
     # Agora vamos testar uma expressão simples (Aqui ta dando erro ainda)
-    test_expr = "(and true false)"
+    test_expr = """true    : (λt. (λf. t))
+    false   : (λt. (λf. f))
+    id      : (λx. x)"""
 
     print(f"\n=== Testando a expressão: {test_expr} ===")
     tokens = tokenize_lambda_expression(test_expr)

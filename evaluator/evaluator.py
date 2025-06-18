@@ -49,6 +49,14 @@ def evaluate(expr: Expr, env: Environment) -> Expr:
             return evaluate(result, env)
         else:
             raise TypeError(f"Tentando aplicar uma expressão não-lambda: {func}")
+    elif isinstance(expr, Binding):
+        # Avalia a expressão ligada e define no ambiente
+        evaluated_expr = evaluate(expr.expr, env)
+        env.define(expr.name, evaluated_expr)
+        return evaluated_expr
+    elif isinstance(expr, Expr):
+        # Se for uma expressão genérica, avalia diretamente
+        return expr
 
     else:
         raise TypeError(f"Tipo de expressão desconhecida: {type(expr)}")
