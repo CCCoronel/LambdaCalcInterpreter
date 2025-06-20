@@ -26,8 +26,6 @@ def main():
         tokens = tokenize_lambda_expression(expr_str)
         #Usa esses tokens para fazer o pareamento e recebe uma lista de estado
         ast_list = parse_tokens(tokens)
-        #Print de teste
-        print(ast_list)
         #Confere cada um dos estados dos nós 
         for stmt in ast_list:
             if isinstance(stmt, Binding):
@@ -36,8 +34,7 @@ def main():
             else:
                 env.define(name, stmt)
 
-    print("\n=== Ambiente carregado com sucesso! ===")
-    print(f"Bindings definidos: {list(env.bindings.keys())}")
+
 
     # Agora vamos testar uma expressão simples (Aqui ta dando erro ainda)
     test_expr = """true    : (λt. (λf. t))
