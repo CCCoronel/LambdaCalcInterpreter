@@ -1,3 +1,5 @@
+import sys
+from utils.pretty_printer import pretty_print
 from lambda_io.file_loader import load_definition
 from parser.tokenizer import tokenize_lambda_expression
 from parser.parser import parse_tokens
@@ -37,17 +39,23 @@ def main():
 
 
     # Agora vamos testar uma expressão simples (Aqui ta dando erro ainda)
-    test_expr = """true    : (λt. (λf. t))
-    false   : (λt. (λf. f))
-    id      : (λx. x)"""
+    test_expr = "(plus 2 3)"
 
     print(f"\n=== Testando a expressão: {test_expr} ===")
+
+    if len(sys.argv) > 1:
+        test_expr = sys.argv[1]
+
     tokens = tokenize_lambda_expression(test_expr)
     ast_list = parse_tokens(tokens)
-
     for stmt in ast_list:
-        result = evaluate(stmt, env)
-        print(f"Resultado da avaliação: {result}")
+        expr = stmt.expr if isinstance(stmt, Binding) else stmt
+        result = evaluate(expr, env)
+        print("Resultado:", result)
+        print("Forma legível (se for lista):")
+        pretty_print(result)
+
+
 
 if __name__ == "__main__":
     main()

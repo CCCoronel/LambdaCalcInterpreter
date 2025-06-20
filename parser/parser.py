@@ -69,15 +69,20 @@ class Parser:
             self.advance()
             next_token = self.current_token()
 
-            # Lambda abstraction
             if next_token.type in (TokenType.LAMBDA_CHR, TokenType.LAMBDA_STR, TokenType.BACKSLASH):
                 return self.parse_lambda()
 
-            # Application: assume que depois de '(' vem duas expressões
-            func_expr = self.parse_expression()
-            arg_expr = self.parse_expression()
+            # Application com n argumentos: (f x y z)
+            exprs = []
+            while self.current_token().type != TokenType.RPAR:
+                exprs.append(self.parse_expression())
             self.expect(TokenType.RPAR)
-            return App(func_expr, arg_expr)
+
+            # Encadeia as aplicações: (((f x) y) z)
+            expr = exprs[0]
+            for arg in exprs[1:]:
+                expr = App(expr, arg)
+            return expr
 
         else:
             raise ParserError(f"Token inesperado: {token.type} na linha {token.line}, coluna {token.column}")

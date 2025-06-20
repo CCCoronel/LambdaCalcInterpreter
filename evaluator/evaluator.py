@@ -54,9 +54,6 @@ def evaluate(expr: Expr, env: Environment) -> Expr:
         evaluated_expr = evaluate(expr.expr, env)
         env.define(expr.name, evaluated_expr)
         return evaluated_expr
-    elif isinstance(expr, Expr):
-        # Se for uma expressão genérica, avalia diretamente
-        return expr
 
     else:
         raise TypeError(f"Tipo de expressão desconhecida: {type(expr)}")
