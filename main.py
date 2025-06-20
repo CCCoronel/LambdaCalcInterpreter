@@ -1,5 +1,6 @@
 import sys
 from utils.pretty_printer import pretty_print
+from utils.normalize import normalize
 from lambda_io.file_loader import load_definition
 from parser.tokenizer import tokenize_lambda_expression
 from parser.parser import parse_tokens
@@ -39,7 +40,7 @@ def main():
 
 
     # Agora vamos testar uma expressão simples (Aqui ta dando erro ainda)
-    test_expr = "(plus 2 3)"
+    test_expr = "(plus 5 3)"
 
     print(f"\n=== Testando a expressão: {test_expr} ===")
 
@@ -51,11 +52,10 @@ def main():
     for stmt in ast_list:
         expr = stmt.expr if isinstance(stmt, Binding) else stmt
         result = evaluate(expr, env)
-        print("Resultado:", result)
-        print("Forma legível (se for lista):")
-        pretty_print(result)
-
-
+        print("Resultado:", result)  # Mostra o termo cru
+        normalized_result = normalize(result)
+        print("Forma legível:")
+        pretty_print(normalized_result)
 
 if __name__ == "__main__":
     main()

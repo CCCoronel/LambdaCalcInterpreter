@@ -1,59 +1,53 @@
 # ast_nodes/printer.py
 
 from ast_nodes.nodes import Var, Lambda, App, Expr
+from evaluator.enviroment import Environment
 
-def is_nil(expr):
-    return isinstance(expr, Var) and expr.name == "nil"
+def term_to_string(term):
+    if isinstance(term, Var):
+        return term.name
+    elif isinstance(term, Lambda):
+        return f"(λ{term.param}. {term_to_string(term.body)})"
+    elif isinstance(term, App):
+        return f"({term_to_string(term.func)} {term_to_string(term.arg)})"
+    else:
+        return str(term)
 
-def is_cons(expr):
-    # Não usamos o cons literal aqui, detectamos estrutura de App(App(Var(cons), head), tail)
-    return isinstance(expr, App) and isinstance(expr.func, App) and isinstance(expr.func.func, Var) and expr.func.func.name == "cons"
 
-def extract_church_number(expr):
-    """
-    Tenta converter um numeral Church para um número Python inteiro.
-    """
-    if not isinstance(expr, Lambda):
+
+def church_to_int(term):
+    if not isinstance(term, Lambda):
         return None
 
-    def count_applications(e):
-        if isinstance(e, Var):
-            return 0
-        elif isinstance(e, App):
-            return 1 + count_applications(e.arg)
-        elif isinstance(e, Lambda):
-            return count_applications(e.body)
+    param_f = term.param
+    body = term.body
+
+    if not isinstance(body, Lambda):
+        return None
+
+    param_x = body.param
+    inner = body.body
+
+    count = 0
+    current = inner
+
+    while isinstance(current, App):
+        if isinstance(current.func, Var) and current.func.name == param_f:
+            count += 1
+            current = current.arg
         else:
             return None
-
-    return count_applications(expr.body)
-
-def to_python_list(expr):
-    result = []
-
-    while True:
-        if is_nil(expr):
-            break
-        if is_cons(expr):
-            head_expr = expr.func.arg
-            tail_expr = expr.arg
-
-            # Tenta extrair numeral de Church
-            num_value = extract_church_number(head_expr)
-            if num_value is not None:
-                result.append(num_value)
-            else:
-                result.append(f"<{head_expr}>")  # Caso não seja número, só mostra a AST
-            expr = tail_expr
-        else:
-            result.append(f"<{expr}>")  # Caso final não seja nil
-            break
-
-    return result
-
-def pretty_print(expr):
-    if is_nil(expr):
-        print("[]")
+    if isinstance(current, Var) and current.name == param_x:
+        return count
     else:
-        as_list = to_python_list(expr)
-        print(as_list)
+        return None
+
+
+
+def pretty_print(term):
+    num = church_to_int(term)
+    if num is not None:
+        print(num)
+    else:
+        print(term_to_string(term))  # Ou print(term) se não tiver term_to_string
+
