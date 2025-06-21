@@ -14,7 +14,7 @@ def main():
     # Carrega todas as definições do core.lambda
     try:
         #Cria uma lista de tublas com as definições. As tuplas são divididas em (name, expr) sendo name o nome da expressão (id, true, false, etc) e o expr a expressão lambda correspondente 
-        bindings = load_definition("core.lambda")
+        bindings = load_definition("../core.lambda")
     except FileNotFoundError:
         print("Arquivo core.lambda não encontrado.")
         return
